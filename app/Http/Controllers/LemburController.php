@@ -35,7 +35,7 @@ class LemburController extends Controller
 
     public function create()
     {
-        return view('lembur.create', compact('result'));
+        return view('lembur.create');
     }
 
     public function store(Request $request)

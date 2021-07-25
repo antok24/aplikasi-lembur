@@ -29,5 +29,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'password', 'remember_token',
     ];
 
+    public function surattugasdetail()
+    {
+        return $this->hasMany('App\SuratTugasDetail', 'nip', 'nip');
+    }
+
     
 }

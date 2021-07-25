@@ -11,6 +11,8 @@
 |
 */
 
+use App\Http\Controllers\SuratTugasController;
+
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -51,7 +53,10 @@ Route::middleware('auth')->group(function(){
 	Route::get('UpbjjUpdatedX/{id}', 'UPBJJController@edit');
 	Route::post('UpbjjUpdated/{id}', 'UPBJJController@updatex');
 
-	Route::resource('surattugas', 'STController');
+	Route::resource('surattugas', 'SuratTugasController');
+	Route::get('surattugas/addpegawai/{id}', 'SuratTugasController@addpegawai')->name('surattugas.addpegawai');
+	Route::post('surattugas/addpegawai/{id}', 'SuratTugasController@simpanaddpegawai')->name('surattugas.simpanaddpegawai');
+	Route::get('surattugas/deletepegawai/{id}', 'SuratTugasController@deletepegawai')->name('surattugas.deletepegawai');
 
 	Route::group(['prefix'=>'study'], function(){
 		Route::get('form', 'PendidikanController@form')->name('study.form');
