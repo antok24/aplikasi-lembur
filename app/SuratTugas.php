@@ -18,4 +18,14 @@ class SuratTugas extends Model
         'user_create',
         'user_update'
     ];
+
+    public function surattugasdetail()
+    {
+        return $this->hasMany('App\SuratTugasDetail', 'nomor_surat_tugas', 'nomor_surat_tugas');
+    }
+
+    public function upbjj()
+    {
+        return $this->belongsTo('App\Upbjj', 'kode_upbjj', 'kode_upbjj');
+    }
 }

@@ -88,7 +88,13 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                            <input type="date" class="form-control" name="tanggal_kegiatan">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
                             <div class="input-group input-group">
                                 <span class="input-group-btn">
                                     <button type="submit" class="btn btn-primary btn-flat">
@@ -142,7 +148,7 @@
                 @endif
 
                 <div class="box-footer">
-                    <button type="submit" class="btn btn-warning">Simpan Semua Petugas | Dan Siap Cetak Surat Tugas</button>
+                    <a href="{{ route('surattugas.updatestatusst',base64_encode($st->id)) }}" class="btn btn-warning">Simpan Semua Petugas | Dan Siap Cetak Surat Tugas</a>
                 </div>
             </div>
         </div>

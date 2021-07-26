@@ -25,6 +25,7 @@
         </a>
         <ul class="treeview-menu">
           <li><a href="{{route('surattugas.create')}}"><i class="fa fa-file-text"></i> Buat Surat Tugas Lembur</a></li>
+          <li><a href="{{route('surattugas.index')}}"><i class="fa fa-file-text"></i> Peragaan Surat Tugas Lembur</a></li>
         </ul>
       </li>
     </ul>

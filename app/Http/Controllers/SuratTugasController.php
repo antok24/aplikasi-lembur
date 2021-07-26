@@ -22,7 +22,9 @@ class SuratTugasController extends Controller
      */
     public function index()
     {
-        //
+        $surattugas = SuratTugas::where('status', 1)->get();
+
+        return view('surattugas.index', compact('surattugas'));
     }
 
     /**
@@ -97,16 +99,16 @@ class SuratTugasController extends Controller
 
         $st = SuratTugas::find($id);
         
-        $cektanggal = SuratTugasDetail::where('tanggal_kegiatan',$st->tanggal_kegiatan)->where('nip',json_decode($request->data)->nip)->count();
+        $cektanggal = SuratTugasDetail::where('tanggal_kegiatan',$request->tanggal_kegiatan)->where('nip',json_decode($request->data)->nip)->count();
 
         if($cektanggal > 0 ){
-            return back()->with('error',''.json_decode($request->data)->name.' sudah ditugaskan pada tanggal '.$st->tanggal_kegiatan.'');
+            return back()->with('error',''.json_decode($request->data)->name.' sudah ditugaskan pada tanggal '.$request->tanggal_kegiatan.'');
         }else{
             $stdetail = new SuratTugasDetail;
             $stdetail->kode_upbjj = $st->kode_upbjj;
             $stdetail->nomor_surat_tugas = $st->nomor_surat_tugas;
             $stdetail->nip = json_decode($request->data)->nip;
-            $stdetail->tanggal_kegiatan = $st->tanggal_kegiatan;
+            $stdetail->tanggal_kegiatan = $request->tanggal_kegiatan;
             $stdetail->user_create = Auth::user()->name;
             $stdetail->save();
 
@@ -114,6 +116,17 @@ class SuratTugasController extends Controller
                             ->with('success', 'Pegawai berhasil ditugaskan'); 
         }     
         
+    }
+
+    public function updatestatusst($id)
+    {
+        if($id){
+            $st = SuratTugas::find(base64_decode($id));
+            $st->status = 1;
+            $st->update();
+
+            return redirect()->route('surattugas.cetak',base64_encode($st->id));
+        }
     }
 
     public function deletepegawai($id)
@@ -124,6 +137,19 @@ class SuratTugasController extends Controller
 
             return redirect()->back()
                         ->with('success', 'Pegawai berhasil dibatalkan tugas');
+        }
+    }
+
+    public function cetak($id)
+    {
+        if($id){
+            $st = SuratTugas::find(base64_decode($id))->with('surattugasdetail','upbjj')->get();
+            
+            $view  = \View::make('surattugas.cetak',['st' => $st])->render();
+            $pdf   = \App::make('dompdf.wrapper');
+            $pdf->loadHTML($view)->setPaper('a4', 'portrait');
+            
+            return $pdf->stream($id.".Pdf");
         }
     }
 

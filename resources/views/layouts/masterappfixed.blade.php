@@ -140,5 +140,6 @@
       modal.find('.modal-body #userid').val(user_id);      
     })
   </script>
+  @yield('script')
 </body>
 </html>

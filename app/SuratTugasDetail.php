@@ -22,4 +22,9 @@ class SuratTugasDetail extends Model
     {
         return $this->belongsTo('App\User', 'nip', 'nip');
     }
+
+    public function surattugas()
+    {
+        return $this->belongsTo('App\SuratTugas', 'nomor_surat_tugas', 'nomor_surat_tugas');
+    }
 }
