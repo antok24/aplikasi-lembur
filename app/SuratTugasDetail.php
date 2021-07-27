@@ -27,4 +27,9 @@ class SuratTugasDetail extends Model
     {
         return $this->belongsTo('App\SuratTugas', 'nomor_surat_tugas', 'nomor_surat_tugas');
     }
+
+    public function lembur()
+    {
+        return $this->belongsTo('App\Lembur', 'id', 'id_surat_tugas_detail');
+    }
 }

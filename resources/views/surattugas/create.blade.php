@@ -3,38 +3,9 @@
 @section('content')
 
 <section class="content">
-  @if (session('success'))
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="alert alert-success">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        {{ session('success') }}
-      </div>
-    </div>
-  </div>
-  @endif
+  
+  @include('layouts.message')
 
-  @if (session('error'))
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="alert alert-danger">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        {{ session('error') }}
-      </div>
-    </div>
-  </div>
-  @endif
-
-  @if (session('any'))
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="alert alert-danger">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        {{ session('any') }}
-      </div>
-    </div>
-  </div>
-  @endif
   <div class="box box-primary" data-select2-id="16">
     <div class="box-header with-border">
       <h3 class="box-title">Buat Surat Tugas Lembur:</h3>

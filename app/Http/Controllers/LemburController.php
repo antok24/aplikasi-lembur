@@ -16,12 +16,12 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 use App\Imports\LemburImport;
 use App\Exports\LemburQueryExport;
+use App\SuratTugasDetail;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class LemburController extends Controller
 {
-    public static $kon = 'mysql';
-    public static $con = 'mysql2';
 
     public function __construct()
     {
@@ -40,27 +40,51 @@ class LemburController extends Controller
 
     public function store(Request $request)
     {
-        date_default_timezone_set("Asia/Bangkok");
-        $request->validate([
-            'namapegawai' => 'required',
-            'nip' => 'required',
-            'nip_atasan' => 'required',
-            'tgl_lembur' => 'required',
-            'kegiatan' => 'required',
-            'uraiankegiatan' => 'required',
-            'satuan' => 'required',
+        // dd(json_decode($request->data)->kode_upbjj);
+        $validator = Validator::make($request->all(), [
+            'data' => 'required',
             'masuk' => 'required',
             'pulang' => 'required',
             'totaljam' => 'required',
-            'status' => 'required',
             'volume' => 'required',
-            'kode_upbjj' => 'required',
-            'user_id' => 'required'
+            'satuan' => 'required',
+            'uraian_kegiatan' => 'required',
         ]);
 
-        Lembur::create($request->all());
-        return redirect()->route('lembur.create')
-                        ->with('success', 'Kegiatan Lembur Anda berhasil di simpan');
+        if($validator->fails()){
+            return back()->with('error',$validator->messages()->all()[0])->withErrors($validator)->withInput();
+        }
+
+        try {
+
+            $datas = json_decode($request->data);
+
+            DB::transaction(function() use($datas, $request) {
+                $lembur = new Lembur;
+                $lembur->kode_upbjj = $datas->kode_upbjj;
+                $lembur->nip = $datas->nip;
+                $lembur->id_surat_tugas_detail = $datas->id;
+                $lembur->uraian_kegiatan = $request->uraian_kegiatan;
+                $lembur->satuan = $request->satuan;
+                $lembur->volume = $request->volume;
+                $lembur->masuk = $request->masuk;
+                $lembur->pulang = $request->pulang;
+                $lembur->totaljam = $request->totaljam;
+                $lembur->user_create = Auth::user()->name;
+                $lembur->save();
+
+                $stdetail = SuratTugasDetail::find($datas->id);
+                $stdetail->status = 1;
+                $stdetail->update();            
+            });
+
+            return redirect()->route('lembur.create')
+                        ->with('success', 'Laporan Lembur Anda berhasil di simpan');
+
+        } catch (\Exception $exception) {
+            return redirect()->back()
+                ->with('error', $exception->getMessage());
+        }
     }
 
     public function edit($id)
@@ -70,12 +94,39 @@ class LemburController extends Controller
     }
 
     
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-       date_default_timezone_set("Asia/Bangkok");
-       $lembur = Lembur::findOrfail($request->id);
-       $lembur->update($request->all());
-       return back()->with('success', 'Data berhasil di Validasi');
+        $validator = Validator::make($request->all(), [
+            'masuk' => 'required',
+            'pulang' => 'required',
+            'totaljam' => 'required',
+            'volume' => 'required',
+            'satuan' => 'required',
+            'uraian_kegiatan' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return back()->with('error',$validator->messages()->all()[0])->withErrors($validator)->withInput();
+        }
+
+        try {
+            $lembur = Lembur::find($id);
+            $lembur->uraian_kegiatan = $request->uraian_kegiatan;
+            $lembur->satuan = $request->satuan;
+            $lembur->volume = $request->volume;
+            $lembur->masuk = $request->masuk;
+            $lembur->pulang = $request->pulang;
+            $lembur->totaljam = $request->totaljam;
+            $lembur->user_update = Auth::user()->name;
+            $lembur->update();
+
+            return redirect()->back()
+                        ->with('success', 'Laporan Lembur Anda berhasil di perbarui');
+
+        } catch (\Exception $exception) {
+            return redirect()->back()
+                ->with('error', $exception->getMessage());
+        }
 
     }
 
@@ -94,28 +145,18 @@ class LemburController extends Controller
         return back()->with('success','Data Berhasil dihapus!');
     }
 
-    public function editlembur()
+    public function editshow()
     {
-        return view('lembur.index_edit');
+        $lemburs = Lembur::where('status_validasi', 0)->get();
+
+        return view('lembur.index_edit', compact('lemburs'));
     }
 
-    public function editsearch()
+    public function editlembur($id)
     {
-        $nip = Auth::user()->nip;
-        $result = DB::SELECT(
-                "SELECT * FROM tlembur
-                WHERE nip='$nip'
-                AND status='0'
-                ");
+        $lembur = Lembur::find(base64_decode($id));
  
-        return view('lembur.index_edit', compact('result'));
-    }
-
-    public function editaja($id)
-    {
-        $result = Lembur::find(decrypt($id));
- 
-        return view('lembur.edit_lembur', compact('result'));
+        return view('lembur.create', compact('lembur'));
     }
 
     public function search(Request $request)
@@ -208,22 +249,40 @@ class LemburController extends Controller
 
     public function laporan()
     {
-        $LotusX = Auth::user()->group;
-        if($LotusX != 1 && $LotusX != 2 && $LotusX != 4 && $LotusX != 5){
-            abort(404);
-        }else{
+        $result = DB::table('t_lembur AS a')
+        ->leftJoin('t_surat_tugas_detail AS b', 'a.id_surat_tugas_detail','=','b.id')
+        ->leftJoin('t_surat_tugas AS c', 'b.nomor_surat_tugas', '=','c.nomor_surat_tugas')
+        ->leftJoin('users AS d', 'a.nip','=','d.nip')
+        ->where('a.kode_upbjj', Auth::user()->kode_upbjj)
+        ->where('a.status_validasi', 0)
+        ->where('d.nip_atasan', Auth::user()->nip)
+        ->select('a.id','d.name','a.nip','b.tanggal_kegiatan','a.masuk','a.pulang','totaljam','c.nama_kegiatan','a.uraian_kegiatan','a.volume','a.satuan')
+        ->get();
 
-        $upbjj = Auth::user()->kode_upbjj;
-        $nipatasan = Auth::user()->nip;
-        $result = DB::SELECT( 
-                "SELECT a.id, a.kode_upbjj, a.nip, a.nip_atasan, a.namapegawai, a.tgl_lembur, a.masuk, a.pulang, a.totaljam, a.kegiatan, a.uraiankegiatan, a.volume, a.satuan, b.status_verifikasi, a.user_id
-                 FROM tlembur a
-                 LEFT JOIN m_statusverifikasi b ON a.status=b.kode_verifikasi
-                 WHERE a.kode_upbjj='$upbjj'
-                 AND a.nip_atasan='$nipatasan'
-                 AND a.status='0'
-                 ");
         return view('lembur.laporan', compact('result'));
+    }
+
+    public function validasi($id)
+    {
+        if($id){
+            $lembur = Lembur::find(base64_decode($id));
+            $lembur->status_validasi = 1;
+            $lembur->catatan_atasan = 'Oke';
+            $lembur->update();
+
+            return redirect()->back()->with('success', 'Data Lembur berhasil divalidasi');
+        }
+    }
+
+    public function gagalvalidasi($id)
+    {
+        if($id){
+            $lembur = Lembur::find(base64_decode($id));
+            $lembur->status_validasi = 2;
+            $lembur->catatan_atasan = 'Mohon diperbaiki lagi';
+            $lembur->update();
+
+            return redirect()->back()->with('warning', 'Data Lembur digagalkan validasinya');
         }
     }
 

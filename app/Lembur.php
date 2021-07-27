@@ -5,24 +5,32 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 class Lembur extends Model
-{
-    public static $kode_upbjj;
-    
-   	protected $table = 'tlembur';
+{    
+   	protected $table = 't_lembur';
     protected $fillable = [
-    		'namapegawai',
-    		'nip',
-            'nip_atasan',
-    		'tgl_lembur',
-    		'kegiatan',
-            'uraiankegiatan',
-            'satuan',
-    		'volume',
-    		'masuk',
-    		'pulang',
-            'totaljam',
-            'status',
-    		'kode_upbjj',
-            'user_id'
-    	];   
+		'kode_upbjj',
+		'nip',
+		'id_surat_tugas_detail',
+		'uraian_kegiatan',
+		'satuan',
+		'volume',
+		'masuk',
+		'pulang',
+		'totaljam',
+		'status_validasi',
+		'kode_upbjj',
+		'catatan_atasan',
+		'user_create',
+		'user_update'
+	];
+		
+	public function user()
+    {
+        return $this->belongsTo('App\User', 'nip', 'nip');
+    }
+
+	public function surattugasdetail()
+    {
+        return $this->belongsTo('App\SuratTugasDetail', 'id_surat_tugas_detail', 'id');
+    }
 }

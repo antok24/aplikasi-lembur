@@ -33,7 +33,7 @@
     
     <ul class="sidebar-menu" data-widget="tree">
       <li><a href="{{ route('lembur.create')}}"><i class="fa fa-file-text"></i> Form Lembur</a></li>
-      <li><a href="{{ url('/EditLembur')}}"><i class="fa fa-edit"></i> Edit Data Lembur</a></li>
+      <li><a href="{{ route('lembur.editshow')}}"><i class="fa fa-edit"></i> Edit Data Lembur</a></li>
       <li><a href="{{ route('lembur.index')}}"><i class="fa fa-print"></i> Cetak Data Lembur Tervalidasi</a></li>
       <li><a href="{{url('RekapLembur')}}"><i class="fa fa-folder-open-o"></i> Rekap Data Lembur Anda</a></li>
     </ul>

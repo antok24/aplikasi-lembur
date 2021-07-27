@@ -106,40 +106,6 @@
         });
     
   </script>
-
-  <script>
-    $('#myModal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget) 
-      var id = button.data('lemburid')
-      var namapegawai = button.data('myname')
-      var nip = button.data('nip')
-      var nip_atasan = button.data('nipatasan')
-      var tgl_lembur = button.data('tgllembur')
-      var masuk = button.data('masuk')
-      var pulang = button.data('pulang')
-      var kegiatan = button.data('kegiatan')
-      var uraiankegiatan = button.data('uraiankegiatan')
-      var volume = button.data('volume')
-      var satuan = button.data('satuan')
-      var kode_upbjj = button.data('kodeupbjj')
-      var user_id = button.data('userid')
-      var modal = $(this)
-
-      modal.find('.modal-body #id').val(id);
-      modal.find('.modal-body #myname').val(namapegawai);
-      modal.find('.modal-body #nip').val(nip);
-      modal.find('.modal-body #nipatasan').val(nip_atasan);
-      modal.find('.modal-body #tgllembur').val(tgl_lembur);
-      modal.find('.modal-body #masuk').val(masuk);
-      modal.find('.modal-body #pulang').val(pulang);
-      modal.find('.modal-body #kegiatan').val(kegiatan);
-      modal.find('.modal-body #uraiankegiatan').val(uraiankegiatan);
-      modal.find('.modal-body #volume').val(volume);
-      modal.find('.modal-body #satuan').val(satuan);
-      modal.find('.modal-body #kodeupbjj').val(kode_upbjj);
-      modal.find('.modal-body #userid').val(user_id);      
-    })
-  </script>
   @yield('script')
 </body>
 </html>
