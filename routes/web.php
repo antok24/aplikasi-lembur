@@ -55,8 +55,9 @@ Route::middleware('auth')->group(function(){
 	Route::post('UpbjjUpdated/{id}', 'UPBJJController@updatex');
 
 	Route::resource('surattugas', 'SuratTugasController');
-	Route::get('surattugas/addpegawai/{id}', 'SuratTugasController@addpegawai')->name('surattugas.addpegawai');
-	Route::post('surattugas/addpegawai/{id}', 'SuratTugasController@simpanaddpegawai')->name('surattugas.simpanaddpegawai');
+	Route::get('surattugas/addpetugas/{id}', 'SuratTugasController@addpegawai')->name('surattugas.addpegawai');
+	Route::get('surattugas/showpetugas/{id}', 'SuratTugasController@showpetugas')->name('surattugas.showpetugas');
+	Route::post('surattugas/addpetugas/{id}', 'SuratTugasController@simpanaddpegawai')->name('surattugas.simpanaddpegawai');
 	Route::get('surattugas/updatestatusst/{id}', 'SuratTugasController@updatestatusst')->name('surattugas.updatestatusst');
 	Route::get('surattugas/deletepegawai/{id}', 'SuratTugasController@deletepegawai')->name('surattugas.deletepegawai');
 	Route::get('surattugas/cetak/{id}', 'SuratTugasController@cetak')->name('surattugas.cetak');

@@ -68,9 +68,18 @@
     <ul class="sidebar-menu" data-widget="tree">
       <li>
         <a href="{{url('rekap-lembur-pegawai')}}"><i class="fa fa-bookmark-o"></i> Validasi Data Lembur
+          @php
+          $data = DB::table('t_lembur AS a')
+                  ->leftJoin('t_surat_tugas_detail AS b', 'a.id_surat_tugas_detail','=','b.id')
+                  ->leftJoin('t_surat_tugas AS c', 'b.nomor_surat_tugas', '=','c.nomor_surat_tugas')
+                  ->leftJoin('users AS d', 'a.nip','=','d.nip')
+                  ->where('a.kode_upbjj', Auth::user()->kode_upbjj)
+                  ->where('a.status_validasi', 0)
+                  ->where('d.nip_atasan', Auth::user()->nip)
+                  ->select('a.id')->count();
+          @endphp
           <span class="pull-right-container">
-            <small class="label pull-right bg-green"><i class="fa fa-question-circle" data-toggle="tooltip"
-                data-placement="center" title="Data yang belum anda Validasi"></i> 100</small>
+            <small class="label pull-right bg-green"><i class="fa fa-question-circle"></i> {{ $data }}</small>
           </span>
         </a>
       </li>

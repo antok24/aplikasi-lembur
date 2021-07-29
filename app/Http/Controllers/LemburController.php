@@ -40,7 +40,6 @@ class LemburController extends Controller
 
     public function store(Request $request)
     {
-        // dd(json_decode($request->data)->kode_upbjj);
         $validator = Validator::make($request->all(), [
             'data' => 'required',
             'masuk' => 'required',

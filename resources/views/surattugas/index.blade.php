@@ -79,7 +79,7 @@
               <td>{{$st->tanggal_kegiatan}}</td>
               <td>
                 <center>
-                  <a href="" class="btn btn-success btn-xs">
+                  <a href="{{ route('surattugas.showpetugas',base64_encode($st->id)) }}" class="btn btn-success btn-xs">
                     <span class="glyphicon glyphicon-user"></span>&nbsp;Lihat Petugas</a>
                 </center>
               </td>

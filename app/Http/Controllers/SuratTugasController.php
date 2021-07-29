@@ -91,6 +91,7 @@ class SuratTugasController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'data' => 'required',
+            'tanggal_kegiatan' => 'required',
         ]);
 
         if($validator->fails()){
@@ -127,6 +128,16 @@ class SuratTugasController extends Controller
 
             return redirect()->route('surattugas.cetak',base64_encode($st->id));
         }
+    }
+
+
+    public function showpetugas($id)
+    {
+        $st = SuratTugas::findOrfail(base64_decode($id));
+
+        $stdetail = SuratTugasDetail::where('nomor_surat_tugas', $st->nomor_surat_tugas)->get();
+
+        return view('surattugas.show-petugas', compact('st','stdetail'));
     }
 
     public function deletepegawai($id)

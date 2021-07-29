@@ -20,6 +20,17 @@
   </div>
   @endif
 
+  @if (session('warning'))
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        {{ session('warning') }}
+      </div>
+    </div>
+  </div>
+  @endif
+
   @if (session('any'))
   <div class="row">
     <div class="col-xs-12">
