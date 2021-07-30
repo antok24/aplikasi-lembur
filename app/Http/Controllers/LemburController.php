@@ -160,10 +160,17 @@ class LemburController extends Controller
 
     public function search(Request $request)
     {
-        $kode_upbjj = Auth::user()->kode_upbjj;
-        $result = Lembur::when($request->cari, function ($query) use ($request) {
-            $query->where('nip', 'LIKE', "%{$request->cari}%")->where('status', 1)->orderBy('created_at', 'desc');
-        })->paginate(100);
+        $result = DB::table('t_lembur AS a')
+        ->leftJoin('t_surat_tugas_detail AS b', 'a.id_surat_tugas_detail','=','b.id')
+        ->leftJoin('t_surat_tugas AS c', 'b.nomor_surat_tugas', '=','c.nomor_surat_tugas')
+        ->leftJoin('users AS d', 'a.nip','=','d.nip')
+        ->where('a.kode_upbjj', Auth::user()->kode_upbjj)
+        ->where('a.status_validasi', 1)
+        ->where('d.nip', Auth::user()->nip)
+        ->whereMonth('b.tanggal_kegiatan','=',$request->data )
+        ->whereYear('b.tanggal_kegiatan','=',$request->tahun)
+        ->select('a.id','d.name','a.nip','b.tanggal_kegiatan','a.masuk','a.pulang','totaljam','c.nama_kegiatan','a.uraian_kegiatan','a.volume','a.satuan')
+        ->get();
  
         return view('lembur.index', compact('result'));
     }
@@ -225,25 +232,17 @@ class LemburController extends Controller
 
     public function peragaanuser()
     {
-        $LotusX = Auth::user()->group;
-        if($LotusX != 1 && $LotusX != 2 && $LotusX != 3 && $LotusX != 4 && $LotusX != 5 && $LotusX != 6 && $LotusX != 7 && $LotusX != 8 ){
-            abort(404);
-        }else{
-
-        $kode_upbjj = Auth::user()->kode_upbjj;
-        $nip = Auth::user()->nip;
-        $result = DB::SELECT( 
-                "SELECT c.nip, a.namapegawai, a.tgl_lembur, a.masuk, a.pulang, a.totaljam, a.kegiatan, a.uraiankegiatan, a.volume, a.satuan, b.status_verifikasi
-                 FROM tlembur a
-                 LEFT JOIN m_statusverifikasi b ON a.status=b.kode_verifikasi
-                 LEFT JOIN users c ON a.nip=c.nip
-                 WHERE a.nip='$nip'
-                 AND a.kode_upbjj='$kode_upbjj' 
-                 AND a.status='1'
-                 ORDER BY a.tgl_lembur ASC
-                 ");
+        $result = DB::table('t_lembur AS a')
+        ->leftJoin('t_surat_tugas_detail AS b', 'a.id_surat_tugas_detail','=','b.id')
+        ->leftJoin('t_surat_tugas AS c', 'b.nomor_surat_tugas', '=','c.nomor_surat_tugas')
+        ->leftJoin('users AS d', 'a.nip','=','d.nip')
+        ->where('a.kode_upbjj', Auth::user()->kode_upbjj)
+        ->where('a.status_validasi', 1)
+        ->where('d.nip', Auth::user()->nip)
+        ->select('a.id','d.name','a.nip','b.tanggal_kegiatan','a.masuk','a.pulang','totaljam','c.nama_kegiatan','a.uraian_kegiatan','a.volume','a.satuan','a.status_validasi')
+        ->get();
+        
         return view('lembur.peragaanupbjj', compact('result'));
-        }
     }
 
     public function laporan()
@@ -292,19 +291,14 @@ class LemburController extends Controller
 
     public function exportquery(Request $request) 
     {
-       // return Excel::download(new LemburQueryExport($request->kode_upbjj), 'Lembur_query.xlsx');
+       
     }
 
     public function changepasswordx($id)
     {
-        $LotusX = Auth::user()->group;
-        if($LotusX != 1 && $LotusX != 2 && $LotusX != 3 && $LotusX != 4 && $LotusX != 5 && $LotusX != 6 && $LotusX != 7 && $LotusX != 8 ){
-            abort(404);
-        }else{
-
+        
         $user = User::find($id);
         return view('password.edit', compact('user'));
-        }
     }
 
     public function importlemburindex()
@@ -329,65 +323,53 @@ class LemburController extends Controller
 
     public function mlemburindex()
     {
-        $LotusX = Auth::user()->group;
-        if($LotusX != 1 && $LotusX != 2){
-            abort(404);
-        }else{
-            return view('lembur.master_index');
-        }
+        return view('lembur.master_index');
     }
 
     public function mlemburindexsearch(Request $request)
-    {
-        $kode_upbjj = Auth::user()->kode_upbjj;
-        $request = Input::get('cari');
-        $result = DB::SELECT(
-                "SELECT * FROM tlembur
-                WHERE kode_upbjj='$kode_upbjj'
-                AND nip='$request'
-                ");
- 
+    { 
         return view('lembur.master_index', compact('result'));
     }
 
     public function masteredit($id)
     {
-        $LotusX = Auth::user()->group;
-        if($LotusX != 1 && $LotusX != 2){
-            abort(404);
-        }else{
-
         $result = Lembur::find(decrypt($id));
         return view('lembur.master_edit_lembur', compact('result'));
-        }
     }
 
     public function ragaindex()
     {
-        $LotusX = Auth::user()->group;
-        if($LotusX != 1 && $LotusX != 2){
-            abort(404);
-        }else{
-            return view('peragaan.raga_validasi');
-        }
+        return view('peragaan.raga_validasi');
     }
 
     public function ragaindexsearch()
     {
-        $LotusX = Auth::user()->group;
-        if($LotusX != 1 && $LotusX != 2){
-            abort(404);
-        }else{
-            date_default_timezone_set("Asia/Bangkok");
-            $request = Input::get('cari');
-            $upbjj = Auth::user()->kode_upbjj;
-            $result = DB::SELECT(
-                    "SELECT * FROM tlembur
-                    WHERE status='$request'
-                    AND kode_upbjj='$upbjj'
-                    ");
-     
-            return view('peragaan.raga_validasi', compact('result'));
+        date_default_timezone_set("Asia/Bangkok");
+        $request = Input::get('cari');
+        $upbjj = Auth::user()->kode_upbjj;
+        $result = DB::SELECT(
+                "SELECT * FROM tlembur
+                WHERE status='$request'
+                AND kode_upbjj='$upbjj'
+                ");
+    
+        return view('peragaan.raga_validasi', compact('result'));
+    }
+
+    public function deletelembur($id)
+    {
+        if($id){
+            DB::transaction(function() use($id) {
+                $lembur = Lembur::findOrfail(base64_decode($id));
+
+                $stdetail = SuratTugasDetail::where('id',$lembur->id_surat_tugas_detail);
+                $stdetail->status = 0;
+                $stdetail->update();
+
+                $lembur->delete();
+            });
+
+            return redirect()->route('lembur.editshow')->with(['success' => 'Lembur berhasil di hapus']);
         }
     }
 }

@@ -4,6 +4,7 @@
 
 
 <section class="content">
+  @include('layouts.message')
   <div class="row">
     <div class="col-xs-12">
       <div class="box box-info">
@@ -12,7 +13,7 @@
               <font color="red"><i> Segera Konfirmasi ke Atasan Anda</i>
                 <br /><br />Anda hanya dapat meng-Edit Data Lembur yang Belum Ter-Validasi</font></b></h3>
         </div>
-        <div class="box-body">
+        <div class="box-body table-responsive no-padding">
           <div class="box-body">
             <table id="example1" class="table table-bordered table-striped table-condensed mb-none">
               <thead style="background-color:#33CCFF; color:#696969;">
@@ -76,7 +77,7 @@
                   <td>{{$a->satuan}}</td>
                   <td>
                     <a href="{{ route('lembur.editlembur', base64_encode($a->id)) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="" class="btn btn-danger btn-sm">Hapus</a>
+                    <a href="{{ route('lembur.deletelembur', base64_encode($a->id)) }}" class="btn btn-danger btn-sm">Hapus</a>
                   </td>
                 </tr>
                 @endforeach

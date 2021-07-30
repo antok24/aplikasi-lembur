@@ -27,13 +27,13 @@ Route::middleware('auth')->group(function(){
 	Route::resource('lembur', 'LemburController');
 	Route::get('/editlembur', 'LemburController@editshow')->name('lembur.editshow');
 	Route::get('/editlembur/{id}', 'LemburController@editlembur')->name('lembur.editlembur');
+	Route::get('editlembur/delete/{id}', 'LemburController@deletelembur')->name('lembur.deletelembur');
 	Route::post('/LemburUpdate/{id}', 'LemburController@updatelembur');
 	Route::get('/ImportLembur', 'LemburController@importlemburindex');
 	Route::post('/ImportLemburX', 'LemburController@importlembur');
-	Route::post('/lembur/search', 'LemburController@search');
+	Route::post('/lembur/tervalidasi', 'LemburController@search')->name('lembur.tervalidasi');
 	Route::get('/lembur/{id}/print', 'LemburController@cetak');
-	Route::get('/RekapLembur', 'LemburController@peragaanuser');
-	Route::get('peragaan-lembur-upbjj', 'LemburController@peragaanupbjj');
+	Route::get('/rekaplembur', 'LemburController@peragaanuser')->name('lembur.rekap');
 	Route::get('rekap-lembur-pegawai', 'LemburController@laporan');
 	Route::get('rekap-lembur-pegawai/{id}', 'LemburController@validasi')->name('lembur.validasi');
 	Route::get('rekap-lembur-pegawai/gagal/{id}', 'LemburController@gagalvalidasi')->name('lembur.gagalvalidasi');
