@@ -97,7 +97,7 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="{{url('peragaan-lembur-upbjj')}}"><i class="fa fa-book"></i> Laporan Data Lembur</a></li>
+          <li><a href="{{ route('lembur.peragaan')}}"><i class="fa fa-book"></i> Laporan Data Lembur</a></li>
         </ul>
       </li>
       @endif
@@ -143,7 +143,6 @@
             </a>
             <ul class="treeview-menu">
               <li><a href="{{url('MasterEditLembur')}}"><i class="fa fa-book"></i> Cari Data Lembur</a></li>
-              <li><a href="{{url('RagaValidasi')}}"><i class="fa fa-book"></i> Data Belum di Validasi</a></li>
             </ul>
           </li>
         </ul>

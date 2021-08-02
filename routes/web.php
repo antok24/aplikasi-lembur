@@ -28,21 +28,18 @@ Route::middleware('auth')->group(function(){
 	Route::get('/editlembur', 'LemburController@editshow')->name('lembur.editshow');
 	Route::get('/editlembur/{id}', 'LemburController@editlembur')->name('lembur.editlembur');
 	Route::get('editlembur/delete/{id}', 'LemburController@deletelembur')->name('lembur.deletelembur');
-	Route::post('/LemburUpdate/{id}', 'LemburController@updatelembur');
-	Route::get('/ImportLembur', 'LemburController@importlemburindex');
-	Route::post('/ImportLemburX', 'LemburController@importlembur');
 	Route::post('/lembur/tervalidasi', 'LemburController@search')->name('lembur.tervalidasi');
 	Route::get('/lembur/{id}/print', 'LemburController@cetak');
 	Route::get('/rekaplembur', 'LemburController@peragaanuser')->name('lembur.rekap');
 	Route::get('rekap-lembur-pegawai', 'LemburController@laporan');
 	Route::get('rekap-lembur-pegawai/{id}', 'LemburController@validasi')->name('lembur.validasi');
 	Route::get('rekap-lembur-pegawai/gagal/{id}', 'LemburController@gagalvalidasi')->name('lembur.gagalvalidasi');
-	Route::get('/excel', 'LemburController@export');
+	Route::get('peragaan-lembur', 'LemburController@peragaan')->name('lembur.peragaan');
+	Route::post('peragaan-lembur', 'LemburController@peragaanlembur')->name('lembur.peragaanlembur');
+
 	Route::get('/MasterEditLembur','LemburController@mlemburindex');
 	Route::post('/MasterEditLembur/search','LemburController@mlemburindexsearch');
 	Route::get('/MasterEditLembur/{id}', 'LemburController@masteredit');
-	Route::get('/RagaValidasi','LemburController@ragaindex');
-	Route::post('/RagaValidasi/search','LemburController@ragaindexsearch');
 
 	Route::resource('user', 'UserController');
 	Route::get('/user/{id}/mXaD', 'UserController@edit');
@@ -50,8 +47,11 @@ Route::middleware('auth')->group(function(){
 	Route::get('/ChangePasswordUserApp/{id}', 'UserController@userchange');
 	Route::post('/ChangePasswordUserAppUpdated/{id}', 'UserController@changeupdateuser');
 
-	Route::resource('upbjj', 'UPBJJController');
-	Route::get('UpbjjUpdatedX/{id}', 'UPBJJController@edit');
+	Route::get('upbjj', 'UPBJJController@index')->name('upbjj.index');
+	Route::get('upbjj/create', 'UPBJJController@create')->name('upbjj.create');
+	Route::post('upbjj/simpan', 'UPBJJController@simpan')->name('upbjj.simpan');
+	Route::get('upbjj/{id}', 'UPBJJController@edit')->name('upbjj.edit');
+	Route::post('upbjj/{id}', 'UPBJJController@update')->name('upbjj.update');
 	Route::post('UpbjjUpdated/{id}', 'UPBJJController@updatex');
 
 	Route::resource('surattugas', 'SuratTugasController');

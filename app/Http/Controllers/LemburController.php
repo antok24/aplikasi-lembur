@@ -16,6 +16,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 use App\Imports\LemburImport;
 use App\Exports\LemburQueryExport;
+use App\SuratTugas;
 use App\SuratTugasDetail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -129,14 +130,6 @@ class LemburController extends Controller
 
     }
 
-    public function updatelembur(Request $request)
-    {
-        date_default_timezone_set("Asia/Bangkok");
-        $lembur = Lembur::findOrfail($request->id);
-        $lembur->update($request->all());
-        return back()->with('success', 'Data Lembur anda berhasil di update');
-    }
-
     public function destroy($id)
     {
         $lembur = Lembur::find($id);
@@ -212,23 +205,32 @@ class LemburController extends Controller
 
     public function peragaan()
     {
-        return view('lembur.peragaan');
+        $surattugas = SuratTugas::where('status', 1)->where('kode_upbjj', Auth::user()->kode_upbjj)->get();
+
+        return view('lembur.peragaan', [
+            'surattugas' => $surattugas
+        ]);
     }
 
-    public function peragaanupbjj()
+    public function peragaanlembur(Request $request)
     {
-        $kode_upbjj = Auth::user()->kode_upbjj;
-        $result = DB::SELECT( 
-                "SELECT c.nip, a.namapegawai, a.tgl_lembur, a.masuk, a.pulang, a.totaljam, a.kegiatan, a.uraiankegiatan, a.volume, a.satuan, b.status_verifikasi
-                 FROM tlembur a
-                 LEFT JOIN m_statusverifikasi b ON a.status=b.kode_verifikasi
-                 LEFT JOIN users c ON a.nip=c.nip
-                 WHERE a.kode_upbjj='$kode_upbjj' 
-                 AND b.kode_verifikasi='1'
-                 ");
-        return view('lembur.peragaanupbjj', compact('result'));
+        $surattugas = SuratTugas::where('status', 1)->where('kode_upbjj', Auth::user()->kode_upbjj)->get();
 
+        $datas = DB::table('t_surat_tugas AS a')
+        ->leftJoin('t_surat_tugas_detail AS b', 'a.nomor_surat_tugas','=','b.nomor_surat_tugas')
+        ->leftJoin('users AS c', 'b.nip','=','c.nip')
+        ->leftJoin('t_lembur AS d', 'b.id', '=', 'd.id_surat_tugas_detail')
+        ->where('a.nomor_surat_tugas',$request->data)
+        ->where('b.kode_upbjj', Auth::user()->kode_upbjj)
+        ->orderBy('b.tanggal_kegiatan', 'ASC')
+        ->get();
+        
+        return view('lembur.peragaan', [
+            'datas' => $datas,
+            'surattugas' => $surattugas
+        ]);
     }
+
 
     public function peragaanuser()
     {
@@ -284,11 +286,6 @@ class LemburController extends Controller
         }
     }
 
-    public function export()
-    {
-        return Excel::download(new LemburExport, 'Lembur.xlsx');
-    }
-
     public function exportquery(Request $request) 
     {
        
@@ -299,26 +296,6 @@ class LemburController extends Controller
         
         $user = User::find($id);
         return view('password.edit', compact('user'));
-    }
-
-    public function importlemburindex()
-    {
-        return view('lembur.import_lembur');
-    }
-
-    public function importlembur(Request $request)
-    {
-        //VALIDASI
-        $this->validate($request, [
-            'file' => 'required|mimes:xls,xlsx'
-        ]);
-
-        if ($request->hasFile('file')) {
-            $file = $request->file('file'); //GET FILE
-            Excel::import(new LemburImport, $file); //IMPORT FILE
-            return redirect()->back()->with(['success' => 'Import Data peserta lembur Berhasil']);
-        }  
-        return redirect()->back()->with(['error' => 'Data Gagal ! Silahkan import ulang']);
     }
 
     public function mlemburindex()
@@ -337,39 +314,18 @@ class LemburController extends Controller
         return view('lembur.master_edit_lembur', compact('result'));
     }
 
-    public function ragaindex()
-    {
-        return view('peragaan.raga_validasi');
-    }
-
-    public function ragaindexsearch()
-    {
-        date_default_timezone_set("Asia/Bangkok");
-        $request = Input::get('cari');
-        $upbjj = Auth::user()->kode_upbjj;
-        $result = DB::SELECT(
-                "SELECT * FROM tlembur
-                WHERE status='$request'
-                AND kode_upbjj='$upbjj'
-                ");
-    
-        return view('peragaan.raga_validasi', compact('result'));
-    }
-
     public function deletelembur($id)
     {
-        if($id){
-            DB::transaction(function() use($id) {
-                $lembur = Lembur::findOrfail(base64_decode($id));
+        DB::transaction(function() use($id) {
+            $lembur = Lembur::findOrfail(base64_decode($id));
 
-                $stdetail = SuratTugasDetail::where('id',$lembur->id_surat_tugas_detail);
-                $stdetail->status = 0;
-                $stdetail->update();
+            $stdetail = SuratTugasDetail::where('id',$lembur->id_surat_tugas_detail)->first();
+            $stdetail->status = 0;
+            $stdetail->save();
 
-                $lembur->delete();
-            });
+            $lembur->delete();
+        });
 
-            return redirect()->route('lembur.editshow')->with(['success' => 'Lembur berhasil di hapus']);
-        }
+        return redirect()->route('lembur.editshow')->with(['success' => 'Lembur berhasil di hapus']);
     }
 }
