@@ -1,17 +1,5 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
-use App\Http\Controllers\SuratTugasController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -46,6 +34,9 @@ Route::middleware('auth')->group(function(){
 	Route::post('/userupdate/{id}', 'UserController@updateuser');
 	Route::get('/ChangePasswordUserApp/{id}', 'UserController@userchange');
 	Route::post('/ChangePasswordUserAppUpdated/{id}', 'UserController@changeupdateuser');
+
+	Route::get('pejabat', 'PejabatController@index')->name('pejabat');
+	Route::post('pejabat/simpan', 'PejabatController@simpan')->name('pejabat.simpan');
 
 	Route::get('upbjj', 'UPBJJController@index')->name('upbjj.index');
 	Route::get('upbjj/create', 'UPBJJController@create')->name('upbjj.create');

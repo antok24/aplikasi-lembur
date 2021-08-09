@@ -10,7 +10,7 @@ class Pejabat extends Model
     protected $fillable = [
         'kode_upbjj',
         'nip', 
-        'jabatan', 
+        'kode_jabatan', 
         'status',
         'user_create',
         'user_update',
@@ -19,5 +19,10 @@ class Pejabat extends Model
     public function user()
     {
         return $this->belongsTo('App\User', 'nip', 'nip');
+    }
+
+    public function jabatan()
+    {
+        return $this->belongsTo('App\Jabatan', 'kode_jabatan', 'kode_jabatan');
     }
 }

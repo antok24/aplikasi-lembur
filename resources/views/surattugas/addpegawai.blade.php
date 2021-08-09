@@ -59,7 +59,7 @@
 
                         <div class="col-md-3">
                             <div class="form-group">
-                            <input type="date" class="form-control" name="tanggal_kegiatan">
+                                <input type="date" class="form-control" name="tanggal_kegiatan">
                             </div>
                         </div>
 
@@ -116,9 +116,13 @@
                 </div>
                 @endif
 
+                @if ($stdetail->isEmpty())
+                @else
                 <div class="box-footer">
-                    <a href="{{ route('surattugas.updatestatusst',base64_encode($st->id)) }}" class="btn btn-warning">Simpan Semua Petugas | Dan Siap Cetak Surat Tugas</a>
+                    <a href="{{ route('surattugas.updatestatusst',base64_encode($st->id)) }}"
+                        class="btn btn-warning">Simpan Semua Petugas | Dan Siap Cetak Surat Tugas</a>
                 </div>
+                @endif
             </div>
         </div>
     </div>

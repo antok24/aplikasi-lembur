@@ -34,12 +34,14 @@
     </ul>
     @endif
 
+    @if(in_array($akses,['1','3','4','5','6','7']))
     <ul class="sidebar-menu" data-widget="tree">
       <li><a href="{{ route('lembur.create')}}"><i class="fa fa-file-text"></i> Form Lembur</a></li>
       <li><a href="{{ route('lembur.editshow')}}"><i class="fa fa-edit"></i> Edit Data Lembur</a></li>
       <li><a href="{{ route('lembur.index')}}"><i class="fa fa-print"></i> Cetak Data Lembur Tervalidasi</a></li>
       <li><a href="{{ route('lembur.rekap')}}"><i class="fa fa-folder-open-o"></i> Rekap Data Lembur Anda</a></li>
     </ul>
+    @endif
     {{-- <ul class="sidebar-menu" data-widget="tree">
       <li class="treeview">
         <a href="#">
@@ -64,7 +66,6 @@
             </a></li>
       </li>
     </ul> --}}
-    @if(isset(Auth::user()->group))
     @if(in_array($akses,['1','4','5']))
     <ul class="sidebar-menu" data-widget="tree">
       <li>
@@ -87,7 +88,7 @@
     </ul>
     @endif
 
-    @if(in_array($akses,['1','2','4','5','6','8']))
+    @if(in_array($akses,['1','4','5','6','8']))
     <ul class="sidebar-menu" data-widget="tree">
       <li class="treeview">
         <a href="#">
@@ -100,8 +101,7 @@
           <li><a href="{{ route('lembur.peragaan')}}"><i class="fa fa-book"></i> Laporan Data Lembur</a></li>
         </ul>
       </li>
-      @endif
-      @if(in_array($akses,['1','2']))
+      @if(in_array($akses,['1']))
       <li class="treeview">
         <a href="#">
           <i class="fa fa-database"></i> <span>Master Data</span>
@@ -130,7 +130,14 @@
               </span>
             </a>
             <ul class="treeview-menu">
-              <li><a href="{{ route('user.index')}}"><i class="fa fa-book"></i> Peragaan Data</a></li>
+              <li>
+                <a href="{{ route('user.index')}}"><i class="fa fa-book"></i> Peragaan Data
+                </a>
+              </li>
+              <li>
+                <a href="{{ route('pejabat')}}"><i class="fa fa-book"></i> Data Pimpinan
+                </a>
+              </li>
             </ul>
           </li>
 

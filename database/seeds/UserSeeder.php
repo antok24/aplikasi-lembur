@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
         $user->email = 'admin@gmail.com';
         $user->group = '1';
         $user->kode_upbjj = '24';
-        $user->password = bcrypt('12345678'); 
+        $user->password = bcrypt('123456789'); 
         $user->save();
     }
 }
