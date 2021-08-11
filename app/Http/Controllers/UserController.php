@@ -19,18 +19,13 @@ class UserController extends Controller
 
     public function index()
     {
-        $userlogin = Auth::user()->group;
-        if($userlogin != 1 && $userlogin != 2){
-            abort(404);
-        }else{
-        $user = User::all();
+        $user = User::where('kode_upbjj', Auth::user()->kode_upbjj)->get();
         return view('user.index', ['user' => $user]);
-    }
     }
 
     public function create()
     {
-        $upbjj = Upbjj::get();
+        $upbjj = Upbjj::where('kode_upbjj', Auth::user()->kode_upbjj)->get();
         $pejabat = Pejabat::where('status', 1)->where('kode_upbjj', Auth::user()->kode_upbjj)->get();
 
         return view('user.create', compact('upbjj', 'pejabat'));

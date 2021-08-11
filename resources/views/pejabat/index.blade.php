@@ -2,6 +2,8 @@
 @section('content')
 <section class="content">
   @include('layouts.message')
+  @if ($cekpejabat > 3)
+  @else
   <div class="box box-primary" data-select2-id="16">
     <div class="box-header with-border">
       <h3 class="box-title">Setting Atasan Unit :</h3>
@@ -17,10 +19,10 @@
       <div class="box-body" data-select2-id="15">
         <div class="row">
           <div class="col-md-6">
-            <label>Atasan :</label>
-            <select name="nip" class="form-control select2" required="">
+            <label>Nama Lengkap :</label>
+            <select name="data" class="form-control select2" required="">
               @foreach ($users as $user)
-              <option value="{{ $user->nip }}">{{ $user->name }}</option>
+              <option value="{{ $user }}">{{ $user->name }}</option>
               @endforeach
             </select>
             @if ($errors->has('nip'))
@@ -31,7 +33,7 @@
           </div>
 
           <div class="col-md-3">
-            <label>UPBJJ :</label>
+            <label>Jabatan :</label>
             <select name="kode_jabatan" class="form-control select2" required="">
               @foreach ($jabatans as $jabatan)
               <option value="{{ $jabatan->kode_jabatan }}">{{ $jabatan->nama_jabatan }}</option>
@@ -49,7 +51,9 @@
         <button type="submit" class="btn btn-primary">Simpan</button>
       </div>
     </form>
-  </div>
+  </div>  
+  @endif
+
   <div class="row">
     <div class="col-xs-12">
       <div class="box box-info">
@@ -85,25 +89,12 @@
                 <td>
                   <center>{{ $no++ }}</center>
                 </td>
-                <td>{{$a->user->nip}}</td>
-                <td>{{$a->user->name}}</td>
+                <td>{{$a->nip}}</td>
+                <td>{{$a->nama_atasan}}</td>
                 <td>{{$a->jabatan->nama_jabatan}}</td>
                 <td>
                   <center>
-                    <form action="{{ route('user.destroy', $a->id)}}" method="POST">
-                      @if(isset($a->id))
-                      @if($a->id == '1' || $a->id == '2')
-                      <a class="btn btn-xs btn-default"><i class="fa fa-key"></i>&nbsp;No Action</a>
-                      @endif
-                      @if($a->id != '1' && $a->id !='2')
-                      <a href="/user/{{encrypt($a->id)}}/mXaD" class="btn btn-xs btn-primary"><i
-                          class="fa fa-edit"></i>Edit</a>
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>
-                      @endif
-                      @endif
-                    </form>
+                    <a href="{{ route('pejabat.delete', base64_encode($a->id)) }}" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> NonAktifkan</a>
                   </center>
                 </td>
               </tr>

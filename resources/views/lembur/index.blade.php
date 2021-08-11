@@ -10,8 +10,7 @@
         <div class="box-header with-border">
           <h3 class="box-title"><b>Peragaan Data Lembur Tervalidasi</b></h3>
         </div>
-        <form action="{{ route('lembur.tervalidasi')}}" method="POST" role="cari">
-          {{csrf_field()}}
+        <form action="{{ route('tervalidasi.search')}}" method="GET">
           <div class="box-body">
             <div class="form-group has-success">
               <div class="row">
@@ -128,7 +127,7 @@
                   <td>{{$a->satuan}}</td>
                   <td>
                     <center>
-                      <a target="_blank" href="/lembur/{{encrypt($a->id)}}/print" class="btn btn-success btn-xs">
+                      <a target="_blank" href="{{ route('lembur.print', base64_encode($a->id)) }}" class="btn btn-success btn-xs">
                         <span class="glyphicon glyphicon-print"></span>&nbsp;Cetak</a>
                     </center>
                   </td>

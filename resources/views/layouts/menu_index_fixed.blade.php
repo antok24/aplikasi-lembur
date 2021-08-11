@@ -38,7 +38,7 @@
     <ul class="sidebar-menu" data-widget="tree">
       <li><a href="{{ route('lembur.create')}}"><i class="fa fa-file-text"></i> Form Lembur</a></li>
       <li><a href="{{ route('lembur.editshow')}}"><i class="fa fa-edit"></i> Edit Data Lembur</a></li>
-      <li><a href="{{ route('lembur.index')}}"><i class="fa fa-print"></i> Cetak Data Lembur Tervalidasi</a></li>
+      <li><a href="{{ route('tervalidasi.form')}}"><i class="fa fa-print"></i> Cetak Data Lembur Tervalidasi</a></li>
       <li><a href="{{ route('lembur.rekap')}}"><i class="fa fa-folder-open-o"></i> Rekap Data Lembur Anda</a></li>
     </ul>
     @endif
@@ -149,7 +149,7 @@
               </span>
             </a>
             <ul class="treeview-menu">
-              <li><a href="{{url('MasterEditLembur')}}"><i class="fa fa-book"></i> Cari Data Lembur</a></li>
+              <li><a href="{{ route('mastereditlembur') }}"><i class="fa fa-book"></i> Data Lembur Pegawai</a></li>
             </ul>
           </li>
         </ul>

@@ -100,7 +100,7 @@
                 <div class="col-md-12">
                   <div class="form-group">
                     <label>Uraian Kegiatan :*</label>
-                    <textarea rows="10" cols="80" name="uraian_kegiatan" class="form-control"
+                    <textarea rows="10" cols="80" id="uraiankegiatan" name="uraian_kegiatan" class="form-control"
                       required>{{ $lembur->uraian_kegiatan }}</textarea>
                   </div>
                 </div>
@@ -208,8 +208,7 @@
                 <div class="col-md-12">
                   <div class="form-group">
                     <label>Uraian Kegiatan :*</label>
-                    <textarea rows="10" cols="80" name="uraian_kegiatan" class="form-control"
-                      required>Harus diisi</textarea>
+                    <textarea name="uraian_kegiatan" class="form-control" required></textarea>
                   </div>
                 </div>
                 <div class="col-md-12">
@@ -262,4 +261,12 @@
     });
   });
 </script>
+@endsection
+
+@section('scripts')
+  <script>
+    CKEDITOR.replace( 'uraian_kegiatan', {
+      uiColor: '#CCEAEE',
+    });
+  </script>
 @endsection

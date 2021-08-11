@@ -1,119 +1,135 @@
 @extends('layouts.masterappfixed')
 @section('content')
-		<br/>
-      <div class="container">
-        @if (session('success'))
-        <div class="col-sm-10">
-          <div class="alert alert-success">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-             {{ session('success') }}
-          </div>
+<section class="content">
+  @include('layouts.message')
+  <div class="row">
+    <div class="col-md-8">
+      <div class="box box-info">
+        <div class="box-header with-border">
+          <h3 class="box-title"><b>Pencarian Data Lembur Pegawai</b></h3>
         </div>
-        @endif
-
-    @if($errors->any())
-    <div class="col-sm-10">
-        <div class="alert alert-danger">
-          <strong>Whoops</strong> Data Gagal di Hapus
-          <ul>
-            @foreach($errors as $error)
-            <li>{{$error}}</li>
-            @endforeach
-          </ul>
-        </div>
-    </div>
-      @endif
-    </div>
-
-		    <div class="col-md-6">
-          <div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title"><b>Raga Data Lembur All</b></h3>
-            </div>
-            <form action="{{url('/MasterEditLembur/search')}}" method="POST" role="cari">              
-              {{csrf_field()}}
-              <div class="box-body">
-                <div class="form-group has-success">
-                  <label class="col-sm-3 control-label">Masukkan NIP</label>
-                  <div class="input-group">
-                    <input type="text" class="form-control" name="cari" placeholder="Masukan NIP" required="">
-                    <span class="input-group-btn">
-                        <button type="submit" class="btn btn-info pull-right">Cari</button>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-        @if(isset($result))
-        <section class="content">
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="box box-info">
-                <div class="box-header">
-                  <h3 class="box-title"><b>Berikut data yang anda cari</b></h3>
-                </div>
-                  <div class="box-body">
-                  <div class="box-body">
-                    <table id="example1" class="table table-bordered table-striped table-condensed mb-none">
-                      <thead style="background-color:#33CCFF; color:#696969;">
-                      <tr>
-                        <th><center>No</center></th>
-                        <th><center>Nama</center></th>
-                        <th><center>NIP</center></th>
-                        <th width="50px"><center>TGL Lembur</center></th>
-                        <th width="50px"><center>Jam Masuk</center></th>
-                        <th width="50px"><center>Jam Pulang</center></th>
-                        <th>Jam Lembur</th>
-                        <th>Nama Kegiatan</th>
-                        <th>Uraian Kegiatan</th>
-                        <th><center>Volume</center></th>
-                        <th width="50px"><center>Satuan</center></th>
-                        <th width="50px"><center>Status</center></th>
-                        <th><center>Opsi</center></th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      @php $no = 1; @endphp
-                      @foreach($result as $a)
-                      <tr>
-                        <td><center>{{$no++}}</center></td>
-                        <td>{{$a->namapegawai}}</td>
-                        <td>{{$a->nip}}</td>
-                        <td width="50px"><center>{{$a->tgl_lembur}}</center></td>
-                        <td width="50px"><center>{{$a->masuk}}</center></td>
-                        <td width="50px"><center>{{$a->pulang}}</center></td>
-                        <td>{{$a->totaljam}}</td>
-                        <td>{{$a->kegiatan}}</td>
-                        <td>{{$a->uraiankegiatan}}</td>
-                        <td width="50px"><center>{{$a->volume}}</center></td>
-                        <td>{{$a->satuan}}</td>
-                        <td width="50px"><center>{{$a->status}}</center></td>
-                        <td>
-                            <form action="{{route('lembur.destroy', $a->id)}}" method="POST">
-                              <a href="/MasterEditLembur/{{encrypt($a->id)}}" class="btn btn-primary btn-xs">E d i t</a>
-                              <a target="_blank" href="/lembur/{{encrypt($a->id)}}/print" class="btn btn-success btn-xs">Cetak</a>
-                            @if(isset(Auth::user()->group))
-                              @if(Auth::user()->group == '1')
-                              @csrf
-                              @method('DELETE')
-                              <button type="submit" class="btn btn-danger btn-xs">Delete</button>
-                              @endif
-                            @endif
-                            </form>
-                        </td>
-                      </tr>
-                      @endforeach
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+        <form action="{{ route('mastereditlembur.cari')}}" method="GET" role="key">
+          <div class="box-body">
+            <div class="form-group has-success">
+              <label class="col-sm-3 control-label">Masukkan NIP / Nama Pegawai</label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="key" placeholder="Masukan NIP / Nama Pegawai" required="">
+                <span class="input-group-btn">
+                  <button type="submit" class="btn btn-info pull-right">Cari</button>
+                </span>
               </div>
             </div>
           </div>
-        </section>
-        @elseif(isset($message))
-        <p>{{ $message }}</p>
-      @endif
+        </form>
+      </div>
+    </div>
+  </div>
+  @if(isset($result))
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-info">
+        <div class="box-header">
+          <h3 class="box-title"><b>Data Lembur Pegawai</b></h3>
+        </div>
+        <div class="box-body table-responsive no-padding">
+          <div class="box-body">
+            <table id="example1" class="table table-bordered table-striped table-condensed mb-none">
+              <thead style="background-color:#33CCFF; color:#696969;">
+                <tr>
+                  <th>
+                    <center>No</center>
+                  </th>
+                  <th>
+                    <center>Nama</center>
+                  </th>
+                  <th>
+                    <center>NIP</center>
+                  </th>
+                  <th>
+                    <center>TGL Lembur</center>
+                  </th>
+                  <th>
+                    <center>Jam Masuk</center>
+                  </th>
+                  <th>
+                    <center>Jam Pulang</center>
+                  </th>
+                  <th>Jam Lembur</th>
+                  <th>Nama Kegiatan</th>
+                  <th>Uraian Kegiatan</th>
+                  <th>
+                    <center>Volume</center>
+                  </th>
+                  <th>
+                    <center>Satuan</center>
+                  </th>
+                  <th>
+                    <center>Opsi</center>
+                  </th>
+                  <th>
+                    <center>Lanjutan</center>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @php $no = 1; @endphp
+                @foreach($result as $a)
+                <tr>
+                  <td>
+                    <center>{{$no++}}</center>
+                  </td>
+                  <td>{{$a->name}}</td>
+                  <td>{{$a->nip}}</td>
+                  <td>
+                    <center>{{$a->tanggal_kegiatan}}</center>
+                  </td>
+                  <td>
+                    <center>{{$a->masuk}}</center>
+                  </td>
+                  <td>
+                    <center>{{$a->pulang}}</center>
+                  </td>
+                  <td>{{$a->totaljam}}</td>
+                  <td>{{$a->nama_kegiatan}}</td>
+                  <td>{{$a->uraian_kegiatan}}</td>
+                  <td>
+                    <center>{{$a->volume}}</center>
+                  </td>
+                  <td>{{$a->satuan}}</td>
+                  <td>
+                    <center>
+                      <a target="_blank" href="{{ route('lembur.print', base64_encode($a->id)) }}" class="btn btn-success btn-xs">
+                        <span class="glyphicon glyphicon-print"></span>&nbsp;
+                        Cetak
+                      </a>
+                      <a href="{{ route('lembur.editlembur',base64_encode($a->id)) }}" class="btn btn-warning btn-xs">
+                        <span class="glyphicon glyphicon-edit"></span>&nbsp;
+                        Edit
+                      </a>
+                      <a href="{{ route('lembur.deletelembur', base64_encode($a->id)) }}" class="btn btn-danger btn-xs">
+                        <span class="glyphicon glyphicon-trash"></span>&nbsp;
+                        Delete
+                      </a>
+                    </center>
+                  </td>
+                  <td>
+                    <center>
+                      <a href="{{ route('lembur.batalvalidasi', base64_encode($a->id)) }}" class="btn btn-danger btn-xs">
+                        <span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;
+                        Batalkan Status Validasi
+                      </a>
+                    </center>
+                  </td>
+                </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  @elseif(isset($message))
+  <p>{{ $message }}</p>
+  @endif
 @endsection

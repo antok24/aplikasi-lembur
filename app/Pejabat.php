@@ -10,10 +10,11 @@ class Pejabat extends Model
     protected $fillable = [
         'kode_upbjj',
         'nip', 
+        'nama_atasan', 
         'kode_jabatan', 
         'status',
         'user_create',
-        'user_update',
+        'user_update'
     ];
 
     public function user()

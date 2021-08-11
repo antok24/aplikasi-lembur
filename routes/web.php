@@ -12,12 +12,16 @@ Route::middleware('auth')->group(function(){
 
 	Route::get('/', 'LemburController@create')->name('create');
 	Route::get('home','HomeController@index')->name('home');
+
 	Route::resource('lembur', 'LemburController');
+
 	Route::get('/editlembur', 'LemburController@editshow')->name('lembur.editshow');
 	Route::get('/editlembur/{id}', 'LemburController@editlembur')->name('lembur.editlembur');
 	Route::get('editlembur/delete/{id}', 'LemburController@deletelembur')->name('lembur.deletelembur');
-	Route::post('/lembur/tervalidasi', 'LemburController@search')->name('lembur.tervalidasi');
-	Route::get('/lembur/{id}/print', 'LemburController@cetak');
+	
+	Route::get('/lembur-tervalidasi', 'LemburController@formsearch')->name('tervalidasi.form');
+	Route::get('/lembur-tervalidasi/search', 'LemburController@search')->name('tervalidasi.search');
+
 	Route::get('/rekaplembur', 'LemburController@peragaanuser')->name('lembur.rekap');
 	Route::get('rekap-lembur-pegawai', 'LemburController@laporan');
 	Route::get('rekap-lembur-pegawai/{id}', 'LemburController@validasi')->name('lembur.validasi');
@@ -25,9 +29,11 @@ Route::middleware('auth')->group(function(){
 	Route::get('peragaan-lembur', 'LemburController@peragaan')->name('lembur.peragaan');
 	Route::post('peragaan-lembur', 'LemburController@peragaanlembur')->name('lembur.peragaanlembur');
 
-	Route::get('/MasterEditLembur','LemburController@mlemburindex');
-	Route::post('/MasterEditLembur/search','LemburController@mlemburindexsearch');
-	Route::get('/MasterEditLembur/{id}', 'LemburController@masteredit');
+	Route::get('/MasterEditLembur','LemburController@mlemburindex')->name('mastereditlembur');
+	Route::get('/MasterEditLembur/search','LemburController@mlemburindexsearch')->name('mastereditlembur.cari');
+	Route::get('/lembur/batalvalidasi/{id}', 'LemburController@batalvalidasi')->name('lembur.batalvalidasi');
+
+	Route::get('/lembur/print/{id}', 'LemburController@cetak')->name('lembur.print');
 
 	Route::resource('user', 'UserController');
 	Route::get('/user/{id}/mXaD', 'UserController@edit');
@@ -37,6 +43,7 @@ Route::middleware('auth')->group(function(){
 
 	Route::get('pejabat', 'PejabatController@index')->name('pejabat');
 	Route::post('pejabat/simpan', 'PejabatController@simpan')->name('pejabat.simpan');
+	Route::get('pejabat/hapus/{id}', 'PejabatController@delete')->name('pejabat.delete');
 
 	Route::get('upbjj', 'UPBJJController@index')->name('upbjj.index');
 	Route::get('upbjj/create', 'UPBJJController@create')->name('upbjj.create');

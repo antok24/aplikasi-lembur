@@ -45,7 +45,7 @@
             <label>Atasan :</label>
             <select name="nip_atasan" class="form-control select2" required="">
               @foreach ($pejabat as $pejabat)
-              <option value="{{ $pejabat->nip }}">{{ $pejabat->user->name }}</option>
+              <option value="{{ $pejabat->nip }}">{{ $pejabat->nama_atasan }}</option>
               @endforeach
             </select>
             @if ($errors->has('nip_atasan'))

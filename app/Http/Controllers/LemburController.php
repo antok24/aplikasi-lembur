@@ -14,8 +14,6 @@ use PDF;
 use App\Exports\LemburExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
-use App\Imports\LemburImport;
-use App\Exports\LemburQueryExport;
 use App\SuratTugas;
 use App\SuratTugasDetail;
 use Carbon\Carbon;
@@ -27,11 +25,6 @@ class LemburController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-    }
-
-    public function index()
-    {
-        return view('lembur.index');
     }
 
     public function create()
@@ -92,7 +85,6 @@ class LemburController extends Controller
         $result = Lembur::find($id);
         return view('lembur.edit', compact('result'));
     }
-
     
     public function update(Request $request, $id)
     {
@@ -151,56 +143,53 @@ class LemburController extends Controller
         return view('lembur.create', compact('lembur'));
     }
 
-    public function search(Request $request)
+    public function formsearch()
     {
-        $result = DB::table('t_lembur AS a')
-        ->leftJoin('t_surat_tugas_detail AS b', 'a.id_surat_tugas_detail','=','b.id')
-        ->leftJoin('t_surat_tugas AS c', 'b.nomor_surat_tugas', '=','c.nomor_surat_tugas')
-        ->leftJoin('users AS d', 'a.nip','=','d.nip')
-        ->where('a.kode_upbjj', Auth::user()->kode_upbjj)
-        ->where('a.status_validasi', 1)
-        ->where('d.nip', Auth::user()->nip)
-        ->whereMonth('b.tanggal_kegiatan','=',$request->data )
-        ->whereYear('b.tanggal_kegiatan','=',$request->tahun)
-        ->select('a.id','d.name','a.nip','b.tanggal_kegiatan','a.masuk','a.pulang','totaljam','c.nama_kegiatan','a.uraian_kegiatan','a.volume','a.satuan')
-        ->get();
- 
-        return view('lembur.index', compact('result'));
+        return view('lembur.index');
     }
 
-    public function search1()
+    public function search()
     {
-        $cari = Input::get('kode_upbjj');
-        if($cari != ""){
-            $result = DB::table('tlembur')
-                        ->join('m_statusverifikasi','tlembur.status','m_statusverifikasi.kodeverifikasi') 
-                        ->where('kode_upbjj', 'LIKE', '%' .$cari. '%')->get();
-            if(count($result)>0)
-                return view('lembur.index')->withDetails($result)->withQuery($cari);
+        $key = Input::all();
+
+        if ($key) {
+            $result = DB::table('t_lembur AS a')
+            ->leftJoin('t_surat_tugas_detail AS b', 'a.id_surat_tugas_detail','=','b.id')
+            ->leftJoin('t_surat_tugas AS c', 'b.nomor_surat_tugas', '=','c.nomor_surat_tugas')
+            ->leftJoin('users AS d', 'a.nip','=','d.nip')
+            ->where('a.kode_upbjj', Auth::user()->kode_upbjj)
+            ->where('a.status_validasi', 1)
+            ->where('d.nip', Auth::user()->nip)
+            ->whereMonth('b.tanggal_kegiatan','=',Input::get('data') )
+            ->whereYear('b.tanggal_kegiatan','=',Input::get('tahun'))
+            ->select('a.id','d.name','a.nip','b.tanggal_kegiatan','a.masuk','a.pulang','totaljam','c.nama_kegiatan','a.uraian_kegiatan','a.volume','a.satuan')
+            ->get();
+    
+            return view('lembur.index', compact('result'));
         }
-        return view('lembur.index')->withMessage('Data Tidak ditemukan!');
+        return redirect()->back();
     }
 
-    public function cetak(Request $request,$id)
+    public function cetak($id)
     {
-        $LotusX = Auth::user()->group;
-        if($LotusX != 1 && $LotusX != 2 && $LotusX != 3 && $LotusX != 4 && $LotusX != 5 && $LotusX != 6 && $LotusX != 7 && $LotusX != 8 ){
-            abort(404);
-        }else{
+        if ($id) {
+            $lembur = DB::table('t_lembur AS a')
+            ->leftJoin('t_surat_tugas_detail AS b', 'a.id_surat_tugas_detail','=','b.id')
+            ->leftJoin('t_surat_tugas AS c', 'b.nomor_surat_tugas', '=','c.nomor_surat_tugas')
+            ->leftJoin('users AS d', 'a.nip','=','d.nip')
+            ->leftJoin('t_pejabat AS e', 'd.nip_atasan','=','e.nip')
+            ->where('a.id', base64_decode($id))
+            ->select('a.id','d.name','a.nip','b.tanggal_kegiatan','a.masuk','a.pulang','totaljam','c.nama_kegiatan','a.uraian_kegiatan','a.volume','a.satuan','d.nip_atasan','e.nama_atasan')
+            ->get();
 
-            $id = decrypt($id);
-            $lembur = DB::SELECT(
-                    "SELECT a.id, a.nip, a.namapegawai, a.nip_atasan, a.tgl_lembur, a.kegiatan, a.uraiankegiatan, a.satuan, a.volume, a.masuk, a.pulang, a.totaljam, b.name
-                    FROM tlembur a
-                    LEFT JOIN users b ON a.nip_atasan=b.nip
-                    WHERE a.id='$id'
-                    ");
             $view  = \View::make('lembur.cetak',['lembur' => $lembur])->render();
             $pdf   = \App::make('dompdf.wrapper');
             $pdf->loadHTML($view)->setPaper('a4', 'portrait');
             
-            return $pdf->stream($id.".Pdf");    
+            return $pdf->stream($id.".Pdf");
         }
+            return redirect()->back()->with('warning', 'ID tidak ditemukan');
+         
     }
 
     public function peragaan()
@@ -286,11 +275,6 @@ class LemburController extends Controller
         }
     }
 
-    public function exportquery(Request $request) 
-    {
-       
-    }
-
     public function changepasswordx($id)
     {
         
@@ -303,15 +287,40 @@ class LemburController extends Controller
         return view('lembur.master_index');
     }
 
-    public function mlemburindexsearch(Request $request)
-    { 
-        return view('lembur.master_index', compact('result'));
+    public function mlemburindexsearch()
+    {
+        $key = Input::get('key');
+
+        if ($key) {
+            $result = DB::table('t_lembur AS a')
+            ->leftJoin('t_surat_tugas_detail AS b', 'a.id_surat_tugas_detail','=','b.id')
+            ->leftJoin('t_surat_tugas AS c', 'b.nomor_surat_tugas', '=','c.nomor_surat_tugas')
+            ->leftJoin('users AS d', 'a.nip','=','d.nip')
+            ->where('a.kode_upbjj', Auth::user()->kode_upbjj)
+            ->where('a.status_validasi', 1)
+            ->where(function ($query) use ($key) {
+                $query->where('a.nip', 'like','%'.$key.'%')
+                    ->orWhere('d.name', 'like','%'.$key.'%');
+            })
+            ->select('a.id','d.name','a.nip','b.tanggal_kegiatan','a.masuk','a.pulang','totaljam','c.nama_kegiatan','a.uraian_kegiatan','a.volume','a.satuan','a.status_validasi')
+            ->orderBy('b.tanggal_kegiatan', 'desc')
+            ->get();
+            
+            return view('lembur.master_index', compact('result'));
+        }
+            return redirect()->back();
     }
 
-    public function masteredit($id)
+    public function batalvalidasi($id)
     {
-        $result = Lembur::find(decrypt($id));
-        return view('lembur.master_edit_lembur', compact('result'));
+        if ($id) {
+            $result = Lembur::findOrfail(base64_decode($id));
+            $result->status_validasi = 0;
+            $result->user_update = Auth::user()->name;
+            $result->update();
+
+            return redirect()->back()->with('warning', 'Data Lembur digagalkan validasinya');
+        }
     }
 
     public function deletelembur($id)
