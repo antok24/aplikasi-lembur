@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function(){
 	Route::post('surattugas/addpetugas/{id}', 'SuratTugasController@simpanaddpegawai')->name('surattugas.simpanaddpegawai');
 	Route::get('surattugas/updatestatusst/{id}', 'SuratTugasController@updatestatusst')->name('surattugas.updatestatusst');
 	Route::get('surattugas/deletepegawai/{id}', 'SuratTugasController@deletepegawai')->name('surattugas.deletepegawai');
-	Route::get('surattugas/cetak/{id}', 'SuratTugasController@cetak')->name('surattugas.cetak');
+	Route::get('surattugas/cetak/{nomor_surat_tugas}', 'SuratTugasController@cetak')->name('surattugas.cetak');
 
 	Route::group(['prefix'=>'study'], function(){
 		Route::get('form', 'PendidikanController@form')->name('study.form');

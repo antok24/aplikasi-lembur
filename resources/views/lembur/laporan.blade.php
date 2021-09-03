@@ -67,7 +67,7 @@
                 </td>
                 <td>{{$a->totaljam}}</td>
                 <td>{{$a->nama_kegiatan}}</td>
-                <td>{{$a->uraian_kegiatan}}</td>
+                <td>{!! $a->uraian_kegiatan !!}</td>
                 <td width="50px">
                   <center>{{$a->volume}}</center>
                 </td>

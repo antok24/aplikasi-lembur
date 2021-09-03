@@ -70,7 +70,7 @@
                   </td>
                   <td>{{$a->totaljam}}</td>
                   <td>{{ $a->surattugasdetail->surattugas->nama_kegiatan }}</td>
-                  <td width="90px">{{$a->uraian_kegiatan}}</td>
+                  <td width="90px">{!! $a->uraian_kegiatan !!}</td>
                   <td width="50px">
                     <center>{{$a->volume}}</center>
                   </td>

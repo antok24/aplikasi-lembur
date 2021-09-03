@@ -100,7 +100,7 @@
                 <div class="col-md-12">
                   <div class="form-group">
                     <label>Uraian Kegiatan :*</label>
-                    <textarea rows="10" cols="80" id="uraiankegiatan" name="uraian_kegiatan" class="form-control"
+                    <textarea rows="10" cols="80" name="uraian_kegiatan" class="form-control"
                       required>{{ $lembur->uraian_kegiatan }}</textarea>
                   </div>
                 </div>
@@ -235,7 +235,6 @@
 </section>
 @endsection
 
-@section('script')
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
   $(document).ready(function(){
@@ -261,7 +260,6 @@
     });
   });
 </script>
-@endsection
 
 @section('scripts')
   <script>

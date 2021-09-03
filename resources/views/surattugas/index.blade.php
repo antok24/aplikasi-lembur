@@ -63,20 +63,32 @@
                 <center>Tanggal</center>
               </th>
               <th>
+                <center>Cetak</center>
+              </th>
+              <th>
                 <center>Opsi</center>
               </th>
             </tr>
           </thead>
           <tbody>
-            @php $no = 1; @endphp
             @foreach($surattugas as $st)
             <tr>
               <td>
-                <center>{{$no++}}</center>
+                <center>
+                  <a href="{{ route('surattugas.addpegawai',base64_encode($st->id)) }}" class="btn btn-danger btn-xs">
+                    <span class="glyphicon glyphicon-edit"></span>&nbsp;Edit Petugas
+                  </a>
+                </center>
               </td>
               <td>{{$st->nomor_surat_tugas}}</td>
               <td>{{$st->nama_kegiatan}}</td>
               <td>{{$st->tanggal_kegiatan}}</td>
+              <td>
+                <center>
+                  <a href="{{ route('surattugas.cetak',base64_encode($st->nomor_surat_tugas)) }}" class="btn btn-success btn-xs">
+                    <span class="glyphicon glyphicon-print"></span>&nbsp;Cetak Surat Tugas</a>
+                </center>
+              </td>
               <td>
                 <center>
                   <a href="{{ route('surattugas.showpetugas',base64_encode($st->id)) }}" class="btn btn-success btn-xs">

@@ -131,7 +131,7 @@ class LemburController extends Controller
 
     public function editshow()
     {
-        $lemburs = Lembur::where('status_validasi', 0)->get();
+        $lemburs = Lembur::where('nip', Auth::user()->nip)->where('status_validasi', 0)->orWhere('status_validasi', 2)->get();
 
         return view('lembur.index_edit', compact('lemburs'));
     }
@@ -211,6 +211,7 @@ class LemburController extends Controller
         ->leftJoin('t_lembur AS d', 'b.id', '=', 'd.id_surat_tugas_detail')
         ->where('a.nomor_surat_tugas',$request->data)
         ->where('b.kode_upbjj', Auth::user()->kode_upbjj)
+        ->select('b.nomor_surat_tugas','a.nama_kegiatan','b.tanggal_kegiatan','c.name','b.status', 'd.status_validasi')
         ->orderBy('b.tanggal_kegiatan', 'ASC')
         ->get();
         

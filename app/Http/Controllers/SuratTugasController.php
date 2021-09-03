@@ -80,7 +80,7 @@ class SuratTugasController extends Controller
     {
         $st = SuratTugas::findOrfail(base64_decode($id));
 
-        $pegawais = User::where('kode_upbjj', Auth::user()->kode_upbjj)->orderBy('name', 'ASC')->get();
+        $pegawais = User::where('kode_upbjj', Auth::user()->kode_upbjj)->where('status', 1)->orderBy('name', 'ASC')->get();
 
         $stdetail = SuratTugasDetail::where('nomor_surat_tugas', $st->nomor_surat_tugas)->get();
 
@@ -126,7 +126,7 @@ class SuratTugasController extends Controller
             $st->status = 1;
             $st->update();
 
-            return redirect()->route('surattugas.cetak',base64_encode($st->id));
+            return redirect()->route('surattugas.cetak',base64_encode($st->nomor_surat_tugas));
         }
     }
 
@@ -151,16 +151,16 @@ class SuratTugasController extends Controller
         }
     }
 
-    public function cetak($id)
+    public function cetak($nomor_surat_tugas)
     {
-        if($id){
-            $st = SuratTugas::find(base64_decode($id))->with('surattugasdetail','upbjj')->get();
-            
+        if($nomor_surat_tugas){
+            $st = SuratTugas::where('nomor_surat_tugas', base64_decode($nomor_surat_tugas))->with('surattugasdetail','upbjj')->get();
+                        
             $view  = \View::make('surattugas.cetak',['st' => $st])->render();
             $pdf   = \App::make('dompdf.wrapper');
             $pdf->loadHTML($view)->setPaper('a4', 'portrait');
             
-            return $pdf->stream($id.".Pdf");
+            return $pdf->stream($nomor_surat_tugas.".Pdf");
         }
     }
 

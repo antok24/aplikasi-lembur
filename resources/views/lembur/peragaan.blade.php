@@ -91,20 +91,12 @@
                   <td>{{$a->name}}</td>
                   <td>
                     <center>
-                      @if($a->status == 1)
-                        <span class="badge bg-green"> Sudah Dibuat </span>
-                      @else
-                      <span class="badge bg-red"> Belum Dibuat </span>
-                      @endif
+                        <span class="badge {{ $a->status == 1 ? 'bg-green' : 'bg-red' }}"> {{ $a->status == 1 ? 'Sudah dibuat' : 'Belum dibuat' }} </span>
                     </center>
                   </td>
                   <td>
                     <center>
-                      @if($a->status_validasi == 1)
-                        <span class="badge bg-green"> Tervalidasi </span>
-                      @else
-                      <span class="badge bg-red"> Belum Divalidasi </span>
-                      @endif
+                      <span class="badge {{ $a->status_validasi == 1 ? 'bg-green' : 'bg-red' }}"> {{ $a->status_validasi == 1 ? 'Tervalidasi' : 'Belum Divalidasi' }} </span>
                     </center>
                   </td>
                 </tr>
