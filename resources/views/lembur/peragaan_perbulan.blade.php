@@ -1,6 +1,5 @@
 @extends('layouts.masterappfixed')
 @section('content')
-
 <section class="content">
 
   @include('layouts.message')
@@ -8,9 +7,10 @@
     <div class="col-md-12">
       <div class="box box-info">
         <div class="box-header with-border">
-          <h3 class="box-title"><b>Peragaan Data Lembur Tervalidasi</b></h3>
+          <h3 class="box-title"><b>Monitoring Data Lembur Berdasarkan Bulan</b></h3>
         </div>
-        <form action="{{ route('tervalidasi.search')}}" method="GET">
+        <form action="{{ route('lembur.peragaanlemburperbulan')}}" method="POST" role="cari">
+        @csrf
           <div class="box-body">
             <div class="form-group has-success">
               <div class="row">
@@ -35,9 +35,11 @@
 
               <div class="col-md-3">
                   <div class="form-group">
+                    <select class="form-control select2" name="tahun" style="width: 100%;">  
                     @foreach ($masa as $a)
-                    <input type="text" class="form-control" name="tahun" value="{{ $a->masa }}" readonly >
+                        <option value="{{ $a->masa }}">{{ $a->masa }}</option>
                     @endforeach
+                    </select>
                   </div>
               </div>
 
@@ -46,7 +48,7 @@
                       <span class="input-group-btn">
                           <button type="submit" class="btn btn-primary">
                             <i class="fa fa-search"></i>
-                              Cari
+                              Tampilkan
                           </button>
                       </span>
                   </div>
@@ -58,12 +60,12 @@
       </div>
     </div>
   </div>
-  @if(isset($result))
+  @if(isset($datas))
   <div class="row">
     <div class="col-md-12">
       <div class="box box-info">
         <div class="box-header">
-          <h3 class="box-title"><b>Berikut data lembur anda yang siap di cetak</b></h3>
+          <h3 class="box-title"><b>Data Pegawai Lembur Berdasarkan Bulan</b></h3>
         </div>
         <div class="box-body table-responsive no-padding">
           <div class="box-body">
@@ -74,63 +76,46 @@
                     <center>No</center>
                   </th>
                   <th>
-                    <center>Nama</center>
+                    <center>Nomor Surat</center>
                   </th>
                   <th>
-                    <center>NIP</center>
+                    <center>Nama Kegiatan</center>
                   </th>
                   <th>
-                    <center>TGL Lembur</center>
+                    <center>Tanggal Kegiatan</center>
                   </th>
                   <th>
-                    <center>Jam Masuk</center>
+                    <center>Petugas</center>
                   </th>
                   <th>
-                    <center>Jam Pulang</center>
-                  </th>
-                  <th>Jam Lembur</th>
-                  <th>Nama Kegiatan</th>
-                  <th>Uraian Kegiatan</th>
-                  <th>
-                    <center>Volume</center>
+                    <center>Status Laporan Lembur</center>
                   </th>
                   <th>
-                    <center>Satuan</center>
-                  </th>
-                  <th>
-                    <center>Opsi</center>
+                    <center>Status Validasi Laporan</center>
                   </th>
                 </tr>
               </thead>
               <tbody>
                 @php $no = 1; @endphp
-                @foreach($result as $a)
+                @foreach($datas as $a)
                 <tr>
                   <td>
                     <center>{{$no++}}</center>
                   </td>
-                  <td>{{$a->name}}</td>
-                  <td>{{$a->nip}}</td>
+                  <td>{{$a->nomor_surat_tugas}}</td>
+                  <td>{{$a->nama_kegiatan}}</td>
                   <td>
                     <center>{{$a->tanggal_kegiatan}}</center>
                   </td>
-                  <td>
-                    <center>{{$a->masuk}}</center>
-                  </td>
-                  <td>
-                    <center>{{$a->pulang}}</center>
-                  </td>
-                  <td>{{$a->totaljam}}</td>
-                  <td>{{$a->nama_kegiatan}}</td>
-                  <td>{!! $a->uraian_kegiatan !!}</td>
-                  <td>
-                    <center>{{$a->volume}}</center>
-                  </td>
-                  <td>{{$a->satuan}}</td>
+                  <td>{{$a->name}}</td>
                   <td>
                     <center>
-                      <a target="_blank" href="{{ route('lembur.print', base64_encode($a->id)) }}" class="btn btn-success btn-xs">
-                        <span class="glyphicon glyphicon-print"></span>&nbsp;Cetak</a>
+                        <span class="badge {{ $a->status == 1 ? 'bg-green' : 'bg-red' }}"> {{ $a->status == 1 ? 'Sudah dibuat' : 'Belum dibuat' }} </span>
+                    </center>
+                  </td>
+                  <td>
+                    <center>
+                      <span class="badge {{ $a->status_validasi == 1 ? 'bg-green' : 'bg-red' }}"> {{ $a->status_validasi == 1 ? 'Tervalidasi' : 'Belum Divalidasi' }} </span>
                     </center>
                   </td>
                 </tr>

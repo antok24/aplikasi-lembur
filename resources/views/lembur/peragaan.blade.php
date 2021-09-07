@@ -7,7 +7,7 @@
     <div class="col-md-12">
       <div class="box box-info">
         <div class="box-header with-border">
-          <h3 class="box-title"><b>Peragaan Data Berdasarkan Nomor Surat Tugas UPBJJ</b></h3>
+          <h3 class="box-title"><b>Monitoring Data Lembur Berdasarkan Nomor Surat Tugas UPBJJ</b></h3>
         </div>
         <form action="{{ route('lembur.peragaanlembur')}}" method="POST" role="cari">
           @csrf
@@ -29,7 +29,7 @@
                       <span class="input-group-btn">
                           <button type="submit" class="btn btn-primary">
                             <i class="fa fa-search"></i>
-                              Cari
+                              Tampilkan
                           </button>
                       </span>
                   </div>

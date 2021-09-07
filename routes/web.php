@@ -29,6 +29,9 @@ Route::middleware('auth')->group(function(){
 	Route::get('peragaan-lembur', 'LemburController@peragaan')->name('lembur.peragaan');
 	Route::post('peragaan-lembur', 'LemburController@peragaanlembur')->name('lembur.peragaanlembur');
 
+	Route::get('peragaan-lembur-perbulan', 'LemburController@peragaanperbulan')->name('lembur.peragaanperbulan');
+	Route::post('peragaan-lembur-perbulan', 'LemburController@peragaanlemburperbulan')->name('lembur.peragaanlemburperbulan');
+
 	Route::get('/MasterEditLembur','LemburController@mlemburindex')->name('mastereditlembur');
 	Route::get('/MasterEditLembur/search','LemburController@mlemburindexsearch')->name('mastereditlembur.cari');
 	Route::get('/lembur/batalvalidasi/{id}', 'LemburController@batalvalidasi')->name('lembur.batalvalidasi');

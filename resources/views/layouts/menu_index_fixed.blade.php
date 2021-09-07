@@ -98,7 +98,12 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="{{ route('lembur.peragaan')}}"><i class="fa fa-book"></i> Laporan Data Lembur</a></li>
+          <li>
+            <a href="{{ route('lembur.peragaanperbulan')}}"><i class="fa fa-book"></i> Lembur Berdasarkan Bulan</a>
+          </li>
+          <li>
+            <a href="{{ route('lembur.peragaan')}}"><i class="fa fa-book"></i> Lembur Berdasarkan ST</a>
+          </li>
         </ul>
       </li>
       @if(in_array($akses,['1','2']))

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Lembur;
 use App\User;
 use App\StatusValidasi;
+use App\Masa;
 use App\export\LemburbulanReport;
 use PDF;
 use App\Exports\LemburExport;
@@ -145,7 +146,11 @@ class LemburController extends Controller
 
     public function formsearch()
     {
-        return view('lembur.index');
+        $masa = Masa::where('status', 1)->where('kode_upbjj', Auth::user()->kode_upbjj)->get();
+        
+        return view('lembur.index',[
+            'masa' => $masa,
+        ]);
     }
 
     public function search()
@@ -153,6 +158,8 @@ class LemburController extends Controller
         $key = Input::all();
 
         if ($key) {
+            $masa = Masa::where('status', 1)->where('kode_upbjj', Auth::user()->kode_upbjj)->get();
+
             $result = DB::table('t_lembur AS a')
             ->leftJoin('t_surat_tugas_detail AS b', 'a.id_surat_tugas_detail','=','b.id')
             ->leftJoin('t_surat_tugas AS c', 'b.nomor_surat_tugas', '=','c.nomor_surat_tugas')
@@ -165,7 +172,7 @@ class LemburController extends Controller
             ->select('a.id','d.name','a.nip','b.tanggal_kegiatan','a.masuk','a.pulang','totaljam','c.nama_kegiatan','a.uraian_kegiatan','a.volume','a.satuan')
             ->get();
     
-            return view('lembur.index', compact('result'));
+            return view('lembur.index', compact('result','masa'));
         }
         return redirect()->back();
     }
@@ -194,7 +201,7 @@ class LemburController extends Controller
 
     public function peragaan()
     {
-        $surattugas = SuratTugas::where('status', 1)->where('kode_upbjj', Auth::user()->kode_upbjj)->get();
+        $surattugas = SuratTugas::where('status', 1)->where('kode_upbjj', Auth::user()->kode_upbjj)->orderBy('id', 'desc')->get();
 
         return view('lembur.peragaan', [
             'surattugas' => $surattugas
@@ -203,7 +210,7 @@ class LemburController extends Controller
 
     public function peragaanlembur(Request $request)
     {
-        $surattugas = SuratTugas::where('status', 1)->where('kode_upbjj', Auth::user()->kode_upbjj)->get();
+        $surattugas = SuratTugas::where('status', 1)->where('kode_upbjj', Auth::user()->kode_upbjj)->orderBy('id','desc')->get();
 
         $datas = DB::table('t_surat_tugas AS a')
         ->leftJoin('t_surat_tugas_detail AS b', 'a.nomor_surat_tugas','=','b.nomor_surat_tugas')
@@ -218,6 +225,36 @@ class LemburController extends Controller
         return view('lembur.peragaan', [
             'datas' => $datas,
             'surattugas' => $surattugas
+        ]);
+    }
+
+    public function peragaanperbulan()
+    {
+        $masa = Masa::where('kode_upbjj', Auth::user()->kode_upbjj)->orderBy('masa', 'desc')->get();
+
+        return view('lembur.peragaan_perbulan', [
+            'masa' => $masa
+        ]);
+    }
+
+    public function peragaanlemburperbulan(Request $request)
+    {
+        $masa = Masa::where('kode_upbjj', Auth::user()->kode_upbjj)->orderBy('masa', 'desc')->get();
+
+        $datas = DB::table('t_surat_tugas AS a')
+        ->leftJoin('t_surat_tugas_detail AS b', 'a.nomor_surat_tugas','=','b.nomor_surat_tugas')
+        ->leftJoin('users AS c', 'b.nip','=','c.nip')
+        ->leftJoin('t_lembur AS d', 'b.id', '=', 'd.id_surat_tugas_detail')
+        ->whereMonth('b.tanggal_kegiatan','=',Input::get('data'))
+        ->whereYear('b.tanggal_kegiatan','=',Input::get('tahun'))
+        ->where('b.kode_upbjj', Auth::user()->kode_upbjj)
+        ->select('b.nomor_surat_tugas','a.nama_kegiatan','b.tanggal_kegiatan','c.name','b.status', 'd.status_validasi')
+        ->orderBy('b.tanggal_kegiatan', 'ASC')
+        ->get();
+        
+        return view('lembur.peragaan_perbulan', [
+            'datas' => $datas,
+            'masa' => $masa
         ]);
     }
 
